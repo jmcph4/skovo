@@ -62,21 +62,32 @@ class TimeSeries(object):
 
         return s
 
+    def _plot_layout(self):
+        return graph_objs.Layout(title=self.name, xaxis={"title": "Time"})
+
     def plot(self):
+        data = []
+        pairs = []
         x_data = []
         y_data = []
 
         for k, v in self.data.items():
-            x_data.append(k)
-            y_data.append(v)
+            pairs.append((k, v))
+
+        for p in sorted(pairs, key=lambda x: x[0]):
+            x_data.append(p[0])
+            y_data.append(p[1])
         
         trace = graph_objs.Scatter(
             x=x_data,
             y=y_data)
-        
-        plot_data = [trace]
 
-        offline.plot(plot_data)
+        layout = self._plot_layout()
+        
+        data = [trace]
+        figure = graph_objs.Figure(data=data, layout=layout)
+
+        offline.plot(figure)
 
 class ABSTimeSeries(TimeSeries):
     """
@@ -165,5 +176,8 @@ class ABSTimeSeries(TimeSeries):
 
     def __str__(self):
         return self.name + " (" + self.series_id + ")"
+
+    def _plot_layout(self):
+        return graph_objs.Layout(title=self.name, xaxis={"title": "Time"}, yaxis={"title": self.unit})
 
 
