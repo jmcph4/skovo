@@ -1,14 +1,16 @@
 from datetime import *
 
+from plotly import *
+
 class TimeSeries(object):
     """
     Representation of a time series
     """
-    def __init__(self, name, data, datetime_format):
+    def __init__(self, name, data, datetime_format=None):
         self._name = str(name)
         self._data = {}
 
-        if datetime_format == "":
+        if datetime_format is None:
             datetime_format = "%Y-%m-%dT%H:%M:%S"
 
         for pair in data:
@@ -59,6 +61,22 @@ class TimeSeries(object):
             s += str(k) + " " + str(v) + "\n"
 
         return s
+
+    def plot(self):
+        x_data = []
+        y_data = []
+
+        for k, v in self.data.items():
+            x_data.append(k)
+            y_data.append(v)
+        
+        trace = graph_objs.Scatter(
+            x=x_data,
+            y=y_data)
+        
+        plot_data = [trace]
+
+        offline.plot(plot_data)
 
 class ABSTimeSeries(TimeSeries):
     """
